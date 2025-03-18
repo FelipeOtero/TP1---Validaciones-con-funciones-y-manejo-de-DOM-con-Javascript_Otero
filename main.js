@@ -1,7 +1,13 @@
 let notaMatematica;
 let notaLengua;
 let notaEfsi;
-let ParrafoPromedio=document.getElementById('promedio');
+let parrafoPromedio=document.getElementById('promedio');
+let parrafoMayorNota=document.getElementById('mayorNota');
+let notasMaterias;
+
+let posiciones = [];
+let nombresMaterias = ["Matemática", "Lengua", "Efsi"];
+
 function validaciones()       
 { 
 
@@ -43,13 +49,7 @@ function validaciones()
         inputLengua.style.borderColor = "green";
         inputEfsi.style.borderColor = "green";
         return true; 
-
-        
-    
     }
-
-    
-    
 }
 
 function calcularPromedio() 
@@ -58,14 +58,39 @@ function calcularPromedio()
 
     if (validacion) {
         let notaPromedio = (notaMatematica + notaLengua + notaEfsi) / 3;
-        ParrafoPromedio.innerText = "El promedio es " + notaPromedio;
+        parrafoPromedio.innerText = "El promedio es " + notaPromedio;
         
     }
 
 }
 
+function encontrarMaximos(array) {
+    let max = -Infinity;  
+    let i = 0;
+    do {
+        if (array[i] > max) {
+            max = array[i];  
+            posiciones.push(i);
+        } else if (array[i] === max) {
+            posiciones.push(i);
+        }
+        i++;
+    } while (i < array.length);
+}
 
-function nombreAzul() 
+function mayorNota() 
 {   
+
+    notasMaterias = [notaMatematica,notaLengua,notaEfsi];
+    encontrarMaximos(notasMaterias);
+
+    console.log(posiciones);
+
+    for (let i = 0; i < nombresMaterias.length; i++) {
+        if (i = posiciones[i]) {
+            parrafoMayorNota.innerText = `Una de la/s nota/s máximás es de la materia ${nombresMaterias[i]} con un valor de ${notasMaterias[i]}`;
+        }
+    }
     
 }
+
