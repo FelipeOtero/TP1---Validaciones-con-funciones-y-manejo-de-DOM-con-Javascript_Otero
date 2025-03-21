@@ -1,0 +1,35 @@
+body{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+height: 100vh;
+}
+
+main{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.formulario{
+    background-color: rgb(161, 230, 233);
+    height: 70%;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    
+}
+
+.formulario button {
+    margin-inline: 1rem;
+}
+#mayorNota{
+ color: blue;
+}
