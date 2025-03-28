@@ -1,97 +1,96 @@
-let notaMatematica;
-let notaLengua;
-let notaEfsi;
-let parrafoPromedio=document.getElementById('promedio');
-let parrafoMayorNota=document.getElementById('mayorNota');
-let notasMaterias;
-let max;
-let nombresMaterias = ["Matemática", "Lengua", "Efsi"];
 
-function validaciones()       
-{ 
+let nombreCompleto = document.getElementById("nombreCompleto");
+let email = document.getElementById("email");
+let contraseña = document.getElementById("contraseña");
+let confirmarContraseña = document.getElementById("confirmarContraseña");
+let form = document.querySelector("form");
+let mensaje = document.querySelector(".mensaje");
+form.appendChild(mensaje);
+let botonModoOscuro = document.querySelector(".botonModoOscuro");
 
-    inputMatematica = document.getElementById('notaMatematica');
-    inputLengua = document.getElementById('notaLengua');
-    inputEfsi = document.getElementById('notaEfsi');
-    
-    notaMatematica = parseInt(inputMatematica.value);
-    notaLengua = parseInt(inputLengua.value);
-    notaEfsi = parseInt(inputEfsi.value);
+botonModoOscuro.addEventListener("click", () => {
+    document.body.classList.toggle("modo-oscuro");
+});
 
-    if (isNaN(notaMatematica) ||  notaMatematica <= 0 || notaMatematica > 10 ||
-        isNaN(notaLengua) || notaLengua <= 0 || notaLengua > 10 ||
-        isNaN(notaEfsi) || notaEfsi <= 0 || notaEfsi > 10
-        )
-    {
-        alert("Completar los campos correctamente");
+nombreCompleto.addEventListener("input", () => verificarNombre());
+email.addEventListener("input", () => verificarEmail());
+contraseña.addEventListener("input", () => verificarContraseña());
+confirmarContraseña.addEventListener("input", () => verificarAmbasContraseñas());
 
-        if(notaMatematica<0 || notaMatematica>10 || isNaN(notaMatematica))
-        {
-            inputMatematica.style.borderColor = "red";
-            
-        }
+function mostrarError(elemento, mensaje) {
+    let error = elemento.nextElementSibling;
+    if (!error || !error.classList.contains("error")) {
+        error = document.createElement("p");
+        error.classList.add("error");
+        elemento.parentNode.appendChild(error);
+    }
+    error.textContent = mensaje;
+    error.style.color = "red";
+}
 
-        if (notaLengua<0||notaLengua>10|| isNaN(notaLengua))
-        {
-            inputLengua.style.borderColor = "red";
-        }
-
-        if (notaEfsi<0||notaEfsi>10|| isNaN(notaEfsi))
-        {
-            inputEfsi.style.borderColor = "red";
-        }
-
-        return false;
-
-    } else { 
-        inputMatematica.style.borderColor = "green";
-        inputLengua.style.borderColor = "green";
-        inputEfsi.style.borderColor = "green";
-        return true; 
+function limpiarError(elemento) {
+    let error = elemento.nextElementSibling;
+    if (error && error.classList.contains("error")) {
+        error.remove();
     }
 }
 
-function calcularPromedio() 
-{   
-    let validacion = validaciones();
-
-    if (validacion) {
-        let notaPromedio = (notaMatematica + notaLengua + notaEfsi) / 3;
-        parrafoPromedio.innerText = "El promedio es " + notaPromedio;
-        if (notaPromedio >= 6) {
-            parrafoPromedio.style.color = "green";
-        } else {
-            parrafoPromedio.style.color = "red";
-        }
-        
+function verificarNombre() {
+    if (nombreCompleto.value.length < 3) {
+        mostrarError(nombreCompleto, "El nombre debe tener al menos 3 caracteres");
+    } else {
+        limpiarError(nombreCompleto);
     }
-
 }
 
-function encontrarMaximos(array) {
-     max = -Infinity;  
-    let i = 0;
-    do {
-        if (array[i] > max) {
-            max = array[i];  
-        } 
-        i++;
-    } while (i < array.length);
-    return max;
-}
-
-function mayorNota() 
-{       
-    let validacion = validaciones();
-    notasMaterias = [notaMatematica,notaLengua,notaEfsi];
-    max = encontrarMaximos(notasMaterias);
-
-    parrafoMayorNota.innerHTML = ``;
-
-    for (let i = 0; i <= nombresMaterias.length; i++) {
-        if (notasMaterias[i]==max) {
-            parrafoMayorNota.innerHTML += `Una de la/s nota/s máximás es de la materia ${nombresMaterias[i]} con un valor de ${notasMaterias[i]} <br>`;
-        }
+function verificarEmail() {
+    const formatoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formatoEmail.test(email.value)) {
+        mostrarError(email, "Ingrese un email válido");
+    } else {
+        limpiarError(email);
     }
-    
 }
+
+function verificarContraseña() {
+    const formatoContraseña = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+    if (!formatoContraseña.test(contraseña.value)) {
+        mostrarError(contraseña, "Mínimo 8 caracteres, una letra y un número");
+    } else {
+        limpiarError(contraseña);
+    }
+}
+
+function verificarAmbasContraseñas() {
+    if (confirmarContraseña.value !== contraseña.value) {
+        mostrarError(confirmarContraseña, "Las contraseñas no coinciden");
+    } else {
+        limpiarError(confirmarContraseña);
+    }
+}
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    verificarNombre();
+    verificarEmail();
+    verificarContraseña();
+    verificarAmbasContraseñas();
+
+    let errores = document.querySelectorAll(".error");
+    if (errores.length === 0) {
+        let usuario = {
+            nombre: nombreCompleto.value,
+            email: email.value,
+        };
+        let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+        usuarios.push(usuario);
+        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+        mensaje.textContent = "Registro exitoso";
+        mensaje.style.color = "green";
+        form.reset();
+    } else {
+        mensaje.textContent = "Corrige los errores antes de enviar";
+        mensaje.style.color = "red";
+    }
+});
